@@ -2,6 +2,7 @@ package server.command;
 
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
+import server.model.User;
 
 import java.io.Writer;
 
@@ -12,7 +13,7 @@ public class UnknownCommand implements Command {
 
     @SneakyThrows
     @Override
-    public void execute() {
+    public void execute(User user) {
         writer.write("Unknown command.\n");
     }
 }

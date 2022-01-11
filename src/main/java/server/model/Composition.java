@@ -9,6 +9,7 @@ import lombok.ToString;
 public class Composition {
     private String author;
     private String name;
+    private User user;
 
     public String toString() {
         return author + " - " + name;

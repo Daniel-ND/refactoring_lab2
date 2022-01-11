@@ -2,6 +2,7 @@ package server;
 
 import server.command.*;
 import lombok.SneakyThrows;
+import server.model.User;
 
 import java.io.BufferedReader;
 import java.io.Reader;
@@ -15,6 +16,7 @@ public class CommandHandler {
     private boolean isRunning = true;
     private final HashMap<String, Command> availableCommands = new HashMap<>();
     private Command unknownCommand;
+    private User user = null;
 
     public CommandHandler(Reader reader, Writer writer, Catalog catalog) {
         this.reader = reader;
@@ -26,13 +28,13 @@ public class CommandHandler {
     @SneakyThrows
     public void handleCommands() {
         BufferedReader reader = new BufferedReader(this.reader);
-        new HelpCommand(writer).execute();
+        new HelpCommand(writer).execute(user);
         while (isRunning) {
             writer.write("Input the command:\n");
             writer.flush();
             String cmd = reader.readLine().toLowerCase();
             Command command = getCmdFromStr(cmd);
-            command.execute();
+            command.execute(user);
             writer.write("----\n");
             writer.flush();
         }
@@ -45,6 +47,9 @@ public class CommandHandler {
         registerCommandType("add", new AddCommand(reader, writer, catalog));
         registerCommandType("exit", new QuitCommand(writer, () -> isRunning = false));
         registerCommandType("help", new HelpCommand(writer));
+        registerCommandType("login", new LoginCommand(reader, writer, catalog, user -> this.user = user));
+        registerCommandType("register", new RegisterCommand(reader, writer, catalog, user -> this.user = user));
+        registerCommandType("logout", new LogoutCommand(writer, () -> this.user = null));
         registerCommandType("del", new DelCommand(reader, writer, catalog));
     }
 

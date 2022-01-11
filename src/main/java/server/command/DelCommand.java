@@ -3,6 +3,7 @@ package server.command;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import server.model.Composition;
+import server.model.User;
 import server.Catalog;
 
 import java.io.BufferedReader;
@@ -18,7 +19,12 @@ public class DelCommand implements Command {
 
     @Override
     @SneakyThrows
-    public void execute() {
+    public void execute(User user) {
+        if (!isAuthenticated(user)) {
+            writer.write("Only authenticated user can execute this server.command.\n");
+            writer.flush();
+            return;
+        }
         BufferedReader br = new BufferedReader(reader);
         writer.write("Input author's name:\n");
         writer.flush();
@@ -27,7 +33,7 @@ public class DelCommand implements Command {
         writer.flush();
         String name = br.readLine();
 
-        Composition composition = new Composition(author, name);
+        Composition composition = new Composition(author, name, user);
         if (catalog.delete(composition)) {
             writer.write("Composition was deleted successfully\n");
         } else {

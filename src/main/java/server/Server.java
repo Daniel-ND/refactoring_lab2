@@ -8,12 +8,12 @@ import java.util.ArrayList;
 
 public class Server {
     private ServerSocket serverSocket;
-    private final Catalog bookCatalog;
+    private final Catalog catalog;
     private final ArrayList<ClientHandler> clientHandlers = new ArrayList<>();
     private boolean isRunning = true;
 
-    public Server(Catalog bookCatalog) {
-        this.bookCatalog = bookCatalog;
+    public Server(Catalog catalog) {
+        this.catalog = catalog;
     }
 
     @SneakyThrows
@@ -27,7 +27,7 @@ public class Server {
     }
 
     private void serveClient(Socket clientSocket) {
-        ClientHandler clientHandler = new ClientHandler(clientSocket, bookCatalog);
+        ClientHandler clientHandler = new ClientHandler(clientSocket, catalog);
         clientHandlers.add(clientHandler);
         new Thread(clientHandler).start();
     }
